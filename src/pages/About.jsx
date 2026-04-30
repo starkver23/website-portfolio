@@ -45,7 +45,7 @@ export default function About() {
             <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 20, color: "var(--accent)", letterSpacing: "0.12em", margin: "0 0 16px" }}>EDUCATION</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <EduItem
-                degree="MSc Computer Science"
+                degree="MSc Advanced Computer Science"
                 school="University of Birmingham, UK"
                 year="2025 – 2026"
                 active
