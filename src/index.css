@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── Blue Metallic Theme (default) ── */
+:root {
+  --bg:         #04080f;
+  --bg2:        #080e1c;
+  --surface:    rgba(255,255,255,0.04);
+  --border:     rgba(30,138,255,0.25);
+  --border-bright: rgba(30,138,255,0.55);
+  --glow:       rgba(30,138,255,0.45);
+  --glow-soft:  rgba(30,138,255,0.15);
+  --accent:     #1e8aff;
+  --accent2:    #50a8ff;
+  --text:       #e8f4ff;
+  --text-muted: #7aadd4;
+  --text-dim:   #3d6a96;
+  --metal-grad: linear-gradient(135deg, #1e8aff22 0%, #0055a808 50%, #1e8aff15 100%);
+  --nav-bg:     rgba(4,8,15,0.85);
+  --card-bg:    rgba(255,255,255,0.03);
+}
+
+/* ── White Metallic Theme ── */
+.theme-white {
+  --bg:         #f0f2f5;
+  --bg2:        #e4e8ee;
+  --surface:    rgba(255,255,255,0.7);
+  --border:     rgba(0,0,0,0.12);
+  --border-bright: rgba(0,0,0,0.35);
+  --glow:       rgba(0,0,0,0.12);
+  --glow-soft:  rgba(0,0,0,0.06);
+  --accent:     #111111;
+  --accent2:    #444444;
+  --text:       #0a0a0a;
+  --text-muted: #444444;
+  --text-dim:   #888888;
+  --metal-grad: linear-gradient(135deg, #ffffff60 0%, #cccccc20 50%, #ffffff40 100%);
+  --nav-bg:     rgba(240,242,245,0.9);
+  --card-bg:    rgba(255,255,255,0.8);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* Metallic noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* ── Utility classes ── */
+.glow-text {
+  color: var(--accent);
+  text-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow-soft);
+  transition: text-shadow 0.4s;
+}
+
+.glow-border {
+  border: 1px solid var(--border);
+  box-shadow: 0 0 20px var(--glow-soft), inset 0 0 20px var(--glow-soft);
+  transition: box-shadow 0.4s, border-color 0.4s;
+}
+
+.glow-border:hover {
+  border-color: var(--border-bright);
+  box-shadow: 0 0 30px var(--glow), inset 0 0 30px rgba(30,138,255,0.08);
+}
+
+.glass {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.metal-shine {
+  background: var(--metal-grad);
+  position: relative;
+  overflow: hidden;
+}
+.metal-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 40%; height: 200%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
+  transform: skewX(-15deg);
+  pointer-events: none;
+}
+
+/* ── Nav pill ── */
+.nav-pill {
+  background: var(--nav-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 30px var(--glow-soft), 0 0 80px rgba(30,138,255,0.06);
+  backdrop-filter: blur(20px);
+  transition: all 0.4s;
+}
+
+/* ── Profile circle ── */
+.profile-ring {
+  padding: 4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--accent), transparent, var(--accent2), transparent, var(--accent));
+  box-shadow: 0 0 40px var(--glow), 0 0 80px var(--glow-soft);
+  animation: spinRing 6s linear infinite;
+}
+@keyframes spinRing {
+  to { filter: hue-rotate(30deg); }
+}
+
+.profile-inner {
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 3px solid var(--bg);
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: none;
+  box-shadow: 0 0 20px var(--glow), 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 0.25s;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 35px var(--glow), 0 4px 30px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border-bright);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  box-shadow: 0 0 12px var(--glow-soft);
+  transition: all 0.25s;
+}
+.btn-outline:hover {
+  background: var(--glow-soft);
+  box-shadow: 0 0 25px var(--glow);
+}
+
+/* ── Section headings ── */
+.section-heading {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  color: var(--text);
+  position: relative;
+  display: inline-block;
+}
+.section-heading::after {
+  content: '';
+  display: block;
+  height: 2px;
+  width: 60%;
+  margin-top: 8px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  box-shadow: 0 0 8px var(--glow);
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s;
+}
+.card:hover {
+  border-color: var(--border-bright);
+  box-shadow: 0 0 30px var(--glow-soft), 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-3px);
+}
+
+/* ── Grid bg dots ── */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--text-dim) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.15;
+}
+
+/* ── Responsive nav ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-mobile-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    background: var(--nav-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 24px;
+    gap: 16px;
+    margin-top: 8px;
+    backdrop-filter: blur(20px);
+    white-space: nowrap;
+  }
+}
