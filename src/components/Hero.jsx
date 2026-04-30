@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Download, Linkedin, ArrowRight } from "lucide-react";
 import cvFile from "./AryanResume.pdf"; 
+import profilePic from "../assets/pic1.jpg";
 
 const container = {
   hidden: {},
@@ -51,7 +52,7 @@ export default function Hero({ onNavigate }) {
               style={{ width: "100%", height: "100%" }}
             >
               <img
-                src="/src/components/pic1.jpg"
+                src={profilePic}
                 alt="Aryan Verma"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
