@@ -137,7 +137,7 @@ export default function Navbar({ currentPage, onNavigate, theme, onToggleTheme }
               </button>
             ))}
             <a
-              href="https://github.com/aryanverma"
+              href="https://github.com/starkver23"
               target="_blank"
               rel="noreferrer"
               style={{
