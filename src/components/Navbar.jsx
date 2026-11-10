@@ -1,221 +1,164 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Github, Sun, Moon, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Github, Linkedin, Download, Moon, Sun } from "lucide-react";
+import { navLinks, profile } from "../data/content";
+import { EASE } from "./Reveal";
 
-const links = [
-  { label: "About",      page: "about" },
-  { label: "Experience", page: "experience" },
-  { label: "Projects",   page: "projects" },
-  { label: "Contact",    page: "contact" },
-];
+const pad = (n) => String(n).padStart(2, "0");
 
-export default function Navbar({ currentPage, onNavigate, theme, onToggleTheme }) {
+export default function Navbar({ active }) {
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // index.html has already applied any saved theme, so read it back from <html>.
+  const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || "light");
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#141210" : "#f3eee4");
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // Storage blocked (private mode): the theme still works for this visit.
+    }
+  }, [theme]);
+
+  const isDark = theme === "dark";
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Lock page scroll and allow Escape to close while the menu is open.
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  const close = () => setMenuOpen(false);
 
   return (
-    <header style={{ padding: "24px 16px", display: "flex", justifyContent: "center", position: "relative", zIndex: 50 }}>
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`nav-pill ${menuOpen ? "nav-mobile-open" : ""}`}
-        style={{
-          borderRadius: 9999,
-          padding: "10px 20px",
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          flexWrap: "wrap",
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
-        {/* Name / logo */}
-        <button
-          onClick={() => { onNavigate("home"); setMenuOpen(false); }}
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontWeight: 800,
-            fontSize: 16,
-            color: "var(--accent)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            letterSpacing: "0.03em",
-            textShadow: "0 0 16px var(--glow)",
-            marginRight: 8,
-            transition: "color 0.3s",
-          }}
-        >
-          AV
-        </button>
+    <>
+      <header className={`nav ${scrolled || menuOpen ? "is-scrolled" : ""}`}>
+        <div className="wrap nav__inner">
+          <a href="#home" className="nav__brand" onClick={close} aria-label="Aryan Verma, back to top">
+            <span className="nav__mark" aria-hidden="true" />
+            {profile.name}
+          </a>
 
-        {/* Desktop links */}
-        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {links.map(({ label, page }) => (
-            <NavLink key={page} label={label} active={currentPage === page} onClick={() => onNavigate(page)} />
-          ))}
+          <nav aria-label="Primary">
+            <ul className="nav__links">
+              {navLinks.slice(1).map(({ id, label }, i) => {
+                const isActive = active === id;
+                return (
+                  <li key={id}>
+                    <a href={`#${id}`} className="nav__link" aria-current={isActive ? "true" : undefined}>
+                      {label}
+                      <sup>{pad(i + 1)}</sup>
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-indicator"
+                          className="nav__indicator"
+                          transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                        />
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
-          {/* GitHub button */}
-          <motion.a
-            href="https://github.com/starkver23"
-            target="_blank"
-            rel="noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              display: "flex", alignItems: "center", gap: 6,
-              padding: "7px 14px",
-              borderRadius: 9999,
-              background: "var(--accent)",
-              color: "var(--bg)",
-              fontFamily: "'Syne', sans-serif",
-              fontWeight: 700,
-              fontSize: 13,
-              border: "none",
-              cursor: "pointer",
-              marginLeft: 8,
-              boxShadow: "0 0 16px var(--glow)",
-              textDecoration: "none",
-              letterSpacing: "0.02em",
-              transition: "all 0.3s",
-            }}
-          >
-            <Github size={14} />
-            GitHub
-          </motion.a>
+          <div className="nav__actions">
+            <a className="icon-link" href={profile.github} target="_blank" rel="noreferrer" aria-label="GitHub">
+              <Github size={19} strokeWidth={1.8} />
+            </a>
+            <a className="icon-link" href={profile.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+              <Linkedin size={19} strokeWidth={1.8} />
+            </a>
+            <a className="btn nav__cv btn--down" href={profile.cv} download>
+              CV <Download size={15} strokeWidth={2.2} />
+            </a>
+          </div>
 
-          {/* Theme toggle */}
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-        </div>
-
-        {/* Mobile hamburger */}
-        <div style={{ display: "none" }} className="mobile-menu-btn">
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer", padding: 4 }}
+            type="button"
+            className="icon-link nav__theme"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            title={isDark ? "Light theme" : "Dark theme"}
           >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            {isDark ? <Sun size={19} strokeWidth={1.8} /> : <Moon size={19} strokeWidth={1.8} />}
+          </button>
+
+          <button
+            type="button"
+            className="nav__toggle"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            {menuOpen ? "Close" : "Menu"}
+            <span className="nav__burger" aria-hidden="true" />
           </button>
         </div>
+      </header>
 
-        {/* Mobile dropdown */}
+      <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{
-              position: "absolute",
-              top: "calc(100% + 12px)",
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "var(--nav-bg)",
-              border: "1px solid var(--border)",
-              borderRadius: 20,
-              padding: "16px 24px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              backdropFilter: "blur(20px)",
-              minWidth: 200,
-              alignItems: "center",
-            }}
+            id="mobile-menu"
+            className="menu"
+            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            animate={{ clipPath: "inset(0 0 0% 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.6, ease: EASE }}
           >
-            {links.map(({ label, page }) => (
-              <button
-                key={page}
-                onClick={() => { onNavigate(page); setMenuOpen(false); }}
-                style={{
-                  background: "none", border: "none",
-                  color: currentPage === page ? "var(--accent)" : "var(--text-muted)",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 15, cursor: "pointer",
-                  textShadow: currentPage === page ? "0 0 10px var(--glow)" : "none",
-                }}
-              >
-                {label}
-              </button>
-            ))}
-            <a
-              href="https://github.com/starkver23"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "flex", alignItems: "center", gap: 6,
-                padding: "7px 16px",
-                borderRadius: 9999,
-                background: "var(--accent)",
-                color: "var(--bg)",
-                fontFamily: "'Syne', sans-serif",
-                fontWeight: 700, fontSize: 13,
-                textDecoration: "none",
-                boxShadow: "0 0 16px var(--glow)",
-              }}
-            >
-              <Github size={14} /> GitHub
-            </a>
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            <nav aria-label="Mobile">
+              <ul className="menu__list">
+                {navLinks.map(({ id, label }, i) => (
+                  <li key={id}>
+                    <motion.a
+                      href={`#${id}`}
+                      className="menu__link"
+                      aria-current={active === id ? "true" : undefined}
+                      onClick={close}
+                      initial={{ y: "100%" }}
+                      animate={{ y: 0 }}
+                      transition={{ duration: 0.7, ease: EASE, delay: 0.15 + i * 0.05 }}
+                    >
+                      <span>{pad(i)}</span>
+                      {label}
+                    </motion.a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div className="menu__foot">
+              <a className="btn btn--down" href={profile.cv} download>
+                Download CV <Download size={16} />
+              </a>
+              <a className="link-line" href={profile.github} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+              <a className="link-line" href={profile.linkedin} target="_blank" rel="noreferrer">
+                LinkedIn
+              </a>
+              <a className="link-line" href={`mailto:${profile.email}`}>
+                Email
+              </a>
+            </div>
           </motion.div>
         )}
-      </motion.nav>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .nav-links { display: none !important; }
-          .mobile-menu-btn { display: flex !important; }
-        }
-      `}</style>
-    </header>
-  );
-}
-
-function NavLink({ label, active, onClick }) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.97 }}
-      style={{
-        background: active ? "rgba(30,138,255,0.12)" : "none",
-        border: active ? "1px solid var(--border)" : "1px solid transparent",
-        borderRadius: 9999,
-        padding: "6px 14px",
-        color: active ? "var(--accent)" : "var(--text-muted)",
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 14,
-        fontWeight: 500,
-        cursor: "pointer",
-        transition: "all 0.25s",
-        textShadow: active ? "0 0 10px var(--glow)" : "none",
-        letterSpacing: "0.01em",
-      }}
-    >
-      {label}
-    </motion.button>
-  );
-}
-
-function ThemeToggle({ theme, onToggle }) {
-  return (
-    <motion.button
-      onClick={onToggle}
-      whileHover={{ scale: 1.1, rotate: 15 }}
-      whileTap={{ scale: 0.95 }}
-      title={theme === "blue" ? "Switch to White" : "Switch to Blue"}
-      style={{
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        borderRadius: "50%",
-        width: 34, height: 34,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        color: "var(--accent)",
-        cursor: "pointer",
-        marginLeft: 4,
-        boxShadow: "0 0 10px var(--glow-soft)",
-        transition: "all 0.3s",
-      }}
-    >
-      {theme === "blue" ? <Sun size={15} /> : <Moon size={15} />}
-    </motion.button>
+      </AnimatePresence>
+    </>
   );
 }

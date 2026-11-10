@@ -1,256 +1,165 @@
-import { motion } from "framer-motion";
-import { Download, Linkedin, ArrowRight } from "lucide-react";
-import cvFile from "./AryanResume.pdf"; 
-import profilePic from "../assets/pic1.jpg";
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { ArrowDown, ArrowUpRight, Download } from "lucide-react";
+import { profile } from "../data/content";
+import { EASE, FadeUp } from "./Reveal";
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
+const nameLine = {
+  hidden: { y: "105%" },
+  show: (i) => ({ y: "0%", transition: { duration: 1.1, ease: EASE, delay: 0.15 + i * 0.12 } }),
 };
 
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-  },
-};
+export default function Hero() {
+  const reduce = useReducedMotion();
 
-export default function Hero({ onNavigate }) {
+  // The two name lines drift apart slightly as the page scrolls.
+  const { scrollY } = useScroll();
+  const driftLeft = useTransform(scrollY, [0, 700], ["0%", reduce ? "0%" : "-7%"]);
+  const driftRight = useTransform(scrollY, [0, 700], ["0%", reduce ? "0%" : "7%"]);
+
   return (
-    <section
-      style={{
-        minHeight: "calc(100vh - 100px)",
-        display: "flex",
-        alignItems: "center",
-        padding: "40px 24px 80px",
-        maxWidth: 1100,
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1.4fr",
-          gap: 64,
-          alignItems: "center",
-          width: "100%",
-        }}
-        className="hero-grid"
-      >
-        {/* LEFT — Profile Photo */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <div className="profile-ring" style={{ width: 280, height: 280 }}>
-            <div
-              className="profile-inner"
-              style={{ width: "100%", height: "100%" }}
-            >
-              <img
-                src={profilePic}
-                alt="Aryan Verma"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* RIGHT — Intro */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          style={{ display: "flex", flexDirection: "column", gap: 20 }}
-        >
-          <motion.div variants={item}>
-            <span
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 13,
-                color: "var(--accent)",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                textShadow: "0 0 12px var(--glow)",
-              }}
-            >
-              &gt; hello, world
-            </span>
-          </motion.div>
-
-          <motion.h1
-            variants={item}
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontWeight: 800,
-              fontSize: "clamp(36px, 5vw, 58px)",
-              lineHeight: 1.1,
-              color: "var(--text)",
-              margin: 0,
-            }}
-          >
-            I'm{" "}
-            <span
-              style={{
-                color: "var(--accent)",
-                textShadow:
-                  "0 0 30px var(--glow), 0 0 60px var(--glow-soft)",
-              }}
-            >
-              Aryan
-            </span>
-            <br />
-            <span style={{ color: "var(--accent2)" }}>Verma</span>
-          </motion.h1>
-
-          <motion.p
-            variants={item}
-            style={{
-              fontSize: 16,
-              lineHeight: 1.75,
-              color: "var(--text-muted)",
-              margin: 0,
-              maxWidth: 460,
-            }}
-          >
-            A Junior Software Engineer & MSc Computer Science student at the
-            University of Birmingham. I build clean, performant web applications
-            and love exploring machine learning, backend systems, and open
-            source.
-          </motion.p>
-
-          {/* Tech pills */}
-          <motion.div
-            variants={item}
-            style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
-          >
-            {["Python", "React", "Node.js", "Java", "SQL", "ML"].map((t) => (
-              <span
-                key={t}
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: 11,
-                  padding: "4px 12px",
-                  borderRadius: 9999,
-                  border: "1px solid var(--border)",
-                  color: "var(--accent)",
-                  background: "rgba(30,138,255,0.06)",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {t}
-              </span>
-            ))}
-          </motion.div>
-
-          {/* CTA buttons */}
-          <motion.div
-            variants={item}
-            style={{
-              display: "flex",
-              gap: 12,
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            {/* ✅ DOWNLOAD CV */}
-            <motion.a
-              href={cvFile}
-              download="Aryan_Verma_CV.pdf"
-              className="btn-primary"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "12px 24px",
-                borderRadius: 12,
-                fontSize: 14,
-                cursor: "pointer",
-                textDecoration: "none",
-              }}
-            >
-              <Download size={16} />
-              Download CV
-            </motion.a>
-
-            {/* LINKEDIN */}
-            <motion.a
-              href="https://linkedin.com/in/aryan-verma-soft-dev"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-outline"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "12px 20px",
-                borderRadius: 12,
-                fontSize: 14,
-                cursor: "pointer",
-                textDecoration: "none",
-              }}
-            >
-              <LinkedInIcon />
-              LinkedIn
-            </motion.a>
-
-            {/* NAVIGATION */}
-            <motion.button
-              onClick={() => onNavigate("projects")}
-              whileHover={{ x: 4 }}
-              style={{
-                background: "none",
-                border: "none",
-                color: "var(--text-dim)",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                transition: "color 0.2s",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--accent)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--text-dim)")
-              }
-            >
-              View projects <ArrowRight size={14} />
-            </motion.button>
-          </motion.div>
-        </motion.div>
+    <section id="home" className="hero" aria-labelledby="hero-title">
+      <div className="hero__grid" aria-hidden="true">
+        <div className="wrap">
+          {Array.from({ length: 6 }, (_, i) => (
+            <span key={i} />
+          ))}
+        </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .hero-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-            text-align: center;
-          }
-          .hero-grid > div:first-child { order: -1; }
-          .hero-grid p, .hero-grid h1 { max-width: 100% !important; }
-        }
-      `}</style>
+      <div className="wrap" style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column" }}>
+        <FadeUp className="hero__meta label" y={12} delay={0.05}>
+          <span>Portfolio ©{new Date().getFullYear()}</span>
+          <span>
+            <strong>Based in {profile.location}</strong> &nbsp;/&nbsp; Backend &amp; full-stack engineering
+          </span>
+          <span className="hero__status">{profile.availability}</span>
+        </FadeUp>
+
+        <div style={{ position: "relative" }}>
+          <h1 className="hero__name" id="hero-title">
+            <span className="visually-hidden">
+              {profile.name}: {profile.roles.join(", ")}
+            </span>
+            <span className="hero__name-line" aria-hidden="true">
+              <motion.span style={{ x: driftLeft }}>
+                <motion.span style={{ display: "inline-block" }} variants={nameLine} custom={0} initial="hidden" animate="show">
+                  {profile.firstName}
+                </motion.span>
+              </motion.span>
+            </span>
+            <span className="hero__name-line hero__name-line--indent" aria-hidden="true">
+              <motion.span style={{ x: driftRight }}>
+                <motion.span style={{ display: "inline-block" }} variants={nameLine} custom={1} initial="hidden" animate="show">
+                  {profile.lastName}
+                  <i className="hero__name-dot" />
+                </motion.span>
+              </motion.span>
+            </span>
+          </h1>
+
+          <motion.div
+            className="hero__badge"
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 1.1, ease: EASE, delay: 0.6 }}
+          >
+            <MagneticBadge disabled={reduce} />
+          </motion.div>
+        </div>
+
+        <div className="hero__bottom grid-12">
+          <FadeUp as="ul" className="hero__roles" delay={0.7} y={16}>
+            {profile.roles.map((role, i) => (
+              <li key={role}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                {role}
+              </li>
+            ))}
+          </FadeUp>
+
+          <FadeUp as="p" className="hero__intro" delay={0.8} y={16}>
+            I'm a Computer Science postgraduate from the <em>University of Birmingham</em> who enjoys building
+            practical software solutions, exploring backend engineering and solving real-world problems through
+            technology.
+          </FadeUp>
+
+          <FadeUp as="ul" className="hero__social" delay={0.9} y={16}>
+            <li>
+              <a className="link-line" href={profile.github} target="_blank" rel="noreferrer">
+                GitHub <ArrowUpRight size={15} />
+              </a>
+            </li>
+            <li>
+              <a className="link-line" href={profile.linkedin} target="_blank" rel="noreferrer">
+                LinkedIn <ArrowUpRight size={15} />
+              </a>
+            </li>
+            <li>
+              <a className="link-line" href={`mailto:${profile.email}`}>
+                Email <ArrowUpRight size={15} />
+              </a>
+            </li>
+          </FadeUp>
+
+          <FadeUp className="hero__scroll label" delay={1} y={0} aria-hidden="true">
+            <span className="hero__scroll-line" />
+            Scroll
+          </FadeUp>
+
+          <FadeUp className="hero__cta" delay={1} y={16}>
+            <a className="btn btn--cobalt btn--down" href="#projects">
+              View projects <ArrowDown size={18} />
+            </a>
+            <a className="btn btn--ghost btn--down" href={profile.cv} download>
+              Download CV <Download size={18} />
+            </a>
+          </FadeUp>
+        </div>
+      </div>
     </section>
   );
 }
 
-function LinkedInIcon() {
+// Rotating "selected work" badge that leans towards the pointer.
+function MagneticBadge({ disabled }) {
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const x = useSpring(mx, { stiffness: 220, damping: 18 });
+  const y = useSpring(my, { stiffness: 220, damping: 18 });
+
+  const onMove = (e) => {
+    if (disabled) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - (r.left + r.width / 2)) * 0.25);
+    my.set((e.clientY - (r.top + r.height / 2)) * 0.25);
+  };
+  const reset = () => {
+    mx.set(0);
+    my.set(0);
+  };
+
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
-      <circle cx="4" cy="4" r="2"/>
-    </svg>
+    <motion.a
+      href="#projects"
+      className="badge"
+      aria-label="Jump to selected work"
+      style={{ x, y }}
+      onPointerMove={onMove}
+      onPointerLeave={reset}
+    >
+      <svg className="badge__ring" viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <path id="badge-circle" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0" />
+        </defs>
+        <text>
+          <textPath href="#badge-circle" textLength="462" lengthAdjust="spacing">
+            Selected work • View projects • Selected work • View projects •
+          </textPath>
+        </text>
+      </svg>
+      <span className="badge__arrow" aria-hidden="true">
+        <ArrowDown strokeWidth={1.6} />
+      </span>
+    </motion.a>
   );
 }

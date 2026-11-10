@@ -1,238 +1,192 @@
-import { motion } from "framer-motion";
-import { ExternalLink, Github } from "lucide-react";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { featuredProjects, otherProjects, profile } from "../data/content";
+import SectionHeader from "../components/SectionHeader";
+import { FadeUp, RevealLines } from "../components/Reveal";
+import { ModellingMock, RadarMock, TrackerArchitecture, TrackerMock } from "../components/Mockups";
 
-const projects = [
-  {
-    title: "CodeClassroom",
-    desc: "A JHipster-based visual programming platform with a custom modelling language and compiler for automated code generation.",
-    stack: ["React.js", "SpringBoot", "JHipster", "Custom Compiler"],
-    github: "https://www.github.com/starkver23/DPA",
-    live: "https://dpa.shah.fyi",
-    featured: true,
-    icon: "🧑🏻‍💻",
-  },
-  {
-    title: "SwopIt",
-    desc: "Developing an AI-enabled peer-to-peer e-commerce platform for university students, with planned AWS deployment. Currently in active development.",
-    stack: ["React.js", "SpringBoot", "PostgreSQL", "AWS"],
-    github: "",
-    live: null,
-    featured: false,
-    icon: "🧑🏻‍💻",
-  },
-  {
-    title: "Self-Driving Car Prototype ",
-    desc: "Built a miniature autonomous vehicle using Arduino and ultrasonic sensors, achieving immediate real-time obstacle detection and full stop response coded in C++.",
-    stack: ["Arduino Uno", "C++", "IoT Sensors"],
-    github: "https://github.com/starkver23/Self-Driving-Car",
-    live: null,
-    icon: "🏎️",
-  },
-  {
-    title: "Savings Goal Tracker",
-    desc: "Built an interactive savings tracker with real-time visual analytics, placing 3rd out of 50 teams across 3 rounds of an IEEE university challenge with 95% goal-tracking accuracy.",
-    stack: ["React", "ChartJs", "Tailwind CSS"],
-    github: "https://do-it-kappa-five.vercel.app/",
-    live: null,
-    icon: "￡",
-  },
-  // {
-  //   title: "Budget Tracker CLI",
-  //   desc: "Terminal-based personal finance tracker with category breakdowns, trend visualisation, and CSV export.",
-  //   stack: ["Python", "Rich", "SQLite"],
-  //   github: "https://github.com/aryanverma",
-  //   live: null,
-  //   icon: "📊",
-  // },
-];
+const pad = (n) => String(n).padStart(2, "0");
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  },
+const visuals = {
+  codeclassroom: { variant: "a", Mock: ModellingMock },
+  "job-tracker": { variant: "b", Mock: TrackerMock, extra: TrackerArchitecture },
+  "job-radar": { variant: "c", Mock: RadarMock },
 };
 
 export default function Projects() {
   return (
-    <section style={{ maxWidth: 960, margin: "0 auto", padding: "60px 24px" }}>
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        style={{ display: "flex", flexDirection: "column", gap: 48 }}
-      >
-        <motion.div variants={item}>
-          <h2
-            className="section-heading"
-            style={{ fontSize: "clamp(32px, 4vw, 48px)" }}
-          >
-            Projects
-          </h2>
-          <p
-            style={{ fontSize: 15, color: "var(--text-muted)", marginTop: 16 }}
-          >
-            Things I've built, from coursework to personal side projects.
-          </p>
-        </motion.div>
+    <section id="projects" className="section" aria-labelledby="projects-title">
+      <div className="wrap">
+        <SectionHeader
+          index="03"
+          name="Projects"
+          aside="Selected work & case studies"
+          titleId="projects-title"
+          title={[
+            "Selected",
+            <>
+              work<span className="accent-v">.</span>
+            </>,
+          ]}
+        />
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 20,
-          }}
-        >
-          {projects.map((p, i) => (
-            <motion.div
-              key={i}
-              variants={item}
-              className="card"
-              style={{
-                borderRadius: 20,
-                padding: 28,
-                display: "flex",
-                flexDirection: "column",
-                gap: 14,
-                border: p.featured
-                  ? "1px solid var(--border-bright)"
-                  : "1px solid var(--border)",
-                boxShadow: p.featured ? "0 0 30px var(--glow-soft)" : "none",
-                position: "relative",
-                overflow: "hidden",
-              }}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            >
-              {p.featured && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 16,
-                    right: 16,
-                    fontSize: 10,
-                    padding: "3px 10px",
-                    borderRadius: 9999,
-                    background: "rgba(30,138,255,0.15)",
-                    color: "var(--accent)",
-                    border: "1px solid var(--border)",
-                    fontFamily: "'Space Mono', monospace",
-                  }}
-                >
-                  Featured
-                </div>
-              )}
+        {featuredProjects.map((project, i) => (
+          <CaseStudy key={project.id} project={project} number={i + 1} total={featuredProjects.length} />
+        ))}
 
-              <div style={{ fontSize: 28 }}>{p.icon}</div>
-
-              <div>
-                <h3
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 16,
-                    color: "var(--text)",
-                    margin: "0 0 8px",
-                  }}
-                >
-                  {p.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: 13,
-                    color: "var(--text-muted)",
-                    lineHeight: 1.65,
-                    margin: 0,
-                  }}
-                >
-                  {p.desc}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: 6,
-                  flexWrap: "wrap",
-                  marginTop: "auto",
-                }}
-              >
-                {p.stack.map((t) => (
-                  <span
-                    key={t}
-                    style={{
-                      fontFamily: "'Space Mono', monospace",
-                      fontSize: 10,
-                      padding: "2px 8px",
-                      borderRadius: 9999,
-                      border: "1px solid var(--border)",
-                      color: "var(--text-dim)",
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              <div style={{ display: "flex", gap: 10 }}>
-                {p.github && (
-                  <a
-                    href={p.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      fontSize: 13,
-                      color: "var(--text-muted)",
-                      textDecoration: "none",
-                      transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--accent)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--text-muted)")
-                    }
-                  >
-                    <Github size={14} /> Code
-                  </a>
-                )}
-                {p.live && (
-                  <a
-                    href={p.live}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      fontSize: 13,
-                      color: "var(--text-muted)",
-                      textDecoration: "none",
-                      transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--accent)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--text-muted)")
-                    }
-                  >
-                    <ExternalLink size={14} /> Live
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+        <OtherWork />
+      </div>
     </section>
+  );
+}
+
+function CaseStudy({ project, number, total }) {
+  const { variant, Mock, extra: Extra } = visuals[project.id];
+  const ref = useRef(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [40, -40]);
+
+  // Case 02 sets its final word in the accent colour.
+  const words = project.title.split(" ");
+  const title =
+    variant === "b"
+      ? [
+          <>
+            {words.slice(0, -1).join(" ")} <em>{words.at(-1)}</em>
+          </>,
+        ]
+      : [project.title];
+
+  const visual = (
+    <motion.figure className="case__visual" style={{ y }}>
+      <Mock />
+      <figcaption className="label">
+        <span>Fig. {pad(number)}: {project.title}</span>
+        <span>Illustrative mock-up, not a screenshot</span>
+      </figcaption>
+      {Extra && (
+        <FadeUp>
+          <Extra />
+        </FadeUp>
+      )}
+    </motion.figure>
+  );
+
+  const stack = (
+    <ul className="case__stack" aria-label="Technologies">
+      {project.stack.map((tech) => (
+        <li className="chip" key={tech}>
+          {tech}
+        </li>
+      ))}
+    </ul>
+  );
+
+  const links =
+    project.links.length > 0 ? (
+      <div className="case__links">
+        {project.links.map((link, i) => (
+          <a
+            key={link.href}
+            className={`btn ${i === 0 ? "" : "btn--ghost"}`}
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {link.label} <ArrowUpRight size={18} />
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p className="case__note">
+        No public link yet.{" "}
+        <a className="link-line" href={`mailto:${profile.email}?subject=${encodeURIComponent(project.title)}`}>
+          Ask me for a walkthrough
+        </a>
+      </p>
+    );
+
+  const highlightItems = project.highlights.map((h) => (
+    <li key={h.title}>
+      <div>
+        <strong>{h.title}</strong>
+        <p>{h.text}</p>
+      </div>
+    </li>
+  ));
+
+  return (
+    <article ref={ref} className={`case case--${variant}`} aria-labelledby={`${project.id}-title`}>
+      <div className="case__head">
+        <span className="case__index">
+          Case <span>{pad(number)}</span> / {pad(total)}
+        </span>
+        <span className="label">{project.kind}</span>
+      </div>
+
+      <RevealLines as="h3" id={`${project.id}-title`} className="case__title" lines={title} />
+
+      {variant === "c" ? (
+        <div className="grid-12 case__body">
+          {visual}
+          <FadeUp className="case__lede">
+            <p className="case__summary">{project.summary}</p>
+            {stack}
+            {links}
+          </FadeUp>
+          <FadeUp as="ol" className="case__highlights" delay={0.1}>
+            {highlightItems}
+          </FadeUp>
+        </div>
+      ) : (
+        <div className="grid-12 case__body">
+          {visual}
+          <FadeUp className="case__text">
+            <p className="case__summary">{project.summary}</p>
+            <ol className="case__highlights">{highlightItems}</ol>
+            {stack}
+            {links}
+          </FadeUp>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function OtherWork() {
+  return (
+    <div className="index">
+      <div className="index__head">
+        <h3>Other work</h3>
+        <span className="label">From the CV & earlier portfolio</span>
+      </div>
+      <ul className="index__list">
+        {otherProjects.map((p, i) => {
+          const isRepo = p.href?.includes("github.com");
+          return (
+            <FadeUp as="li" key={p.title} className={`index__row ${p.href ? "has-link" : ""}`} y={16}>
+              <div className="index__inner">
+                <span className="index__no label">({pad(i + 1)})</span>
+                <span className="index__title">{p.title}</span>
+                <p className="index__summary">{p.summary}</p>
+                <div className="index__aside">
+                  <span className="label">{p.stack.join(" · ")}</span>
+                  {p.href ? (
+                    <a className="index__arrow" href={p.href} target="_blank" rel="noreferrer">
+                      {isRepo ? "Code" : "Live"} <ArrowUpRight size={16} />
+                      <span className="visually-hidden">: {p.title}</span>
+                    </a>
+                  ) : (
+                    <span className="label">{p.status}</span>
+                  )}
+                </div>
+              </div>
+            </FadeUp>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

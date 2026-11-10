@@ -1,247 +1,72 @@
-import { motion } from "framer-motion";
-
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-const skills = [
-  {
-    category: "Programming Languages",
-    items: ["Python", "Java"],
-  },
-  {
-    category: "Framework & Libraries",
-    items: ["Spring Boot", "Node.js", "Express.js", "Node.js", "Django"],
-  },
-  {
-    category: "Cloud & Database",
-    items: ["AWS (EC2 & EC3)", "MySQL", "MongoDB"],
-  },
-  {
-    category: "Embedded & IOT",
-    items: ["Arduino UNO", "Ultrasonic Sensors", "RF Modules"],
-  },
-  {
-    category: "System & Tools",
-    items: ["Git", "Docker", "Postman", "Selenium"],
-  },
-];
+import { about } from "../data/content";
+import profilePic from "../assets/pic1.jpg";
+import SectionHeader from "../components/SectionHeader";
+import { FadeUp } from "../components/Reveal";
 
 export default function About() {
   return (
-    <section style={{ maxWidth: 900, margin: "0 auto", padding: "60px 24px" }}>
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        style={{ display: "flex", flexDirection: "column", gap: 48 }}
-      >
-        <motion.div variants={item}>
-          <h2
-            className="section-heading"
-            style={{ fontSize: "clamp(32px, 4vw, 48px)", marginBottom: 0 }}
-          >
-            About Me
-          </h2>
-        </motion.div>
+    <section id="about" className="section about" aria-labelledby="about-title">
+      <div className="wrap">
+        <SectionHeader
+          index="01"
+          name="About"
+          aside="Background & interests"
+          titleId="about-title"
+          title={[
+            "Practical software,",
+            <>
+              built <span className="accent">end to end.</span>
+            </>,
+          ]}
+        />
 
-        <motion.div
-          variants={item}
-          style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 40 }}
-          className="about-grid"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.8,
-                color: "var(--text-muted)",
-                margin: 0,
-              }}
-            >
-              I'm <strong style={{ color: "var(--text)" }}>Aryan Verma</strong>,
-              a Software Engineer and recent MSc Computer Science graduate from
-              the University of Birmingham, UK, graduating with Merit.{" "}
-            </p>
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.8,
-                color: "var(--text-muted)",
-                margin: 0,
-              }}
-            >
-              My passion lies in building clean, efficient software. From robust
-              backend APIs to engaging frontend experiences. I'm drawn to the
-              intersection of systems engineering and machine learning.
-            </p>
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.8,
-                color: "var(--text-muted)",
-                margin: 0,
-              }}
-            >
-              Outside of code, I contribute to open source, read about
-              distributed systems, and constantly tinker with side projects that
-              challenge what I know.
-            </p>
-          </div>
+        <div className="grid-12 about__body">
+          <FadeUp as="figure" className="about__figure">
+            <div className="about__photo">
+              <img src={profilePic} alt="Aryan Verma standing on Tower Bridge, London" loading="lazy" width="1181" height="1181" />
+            </div>
+            <figcaption className="label">
+              <span>Fig. 01</span>
+              <span>London</span>
+            </figcaption>
+          </FadeUp>
 
-          {/* Education card */}
-          <div className="card" style={{ borderRadius: 20, padding: 28 }}>
-            <p
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 20,
-                color: "var(--accent)",
-                letterSpacing: "0.12em",
-                margin: "0 0 16px",
-              }}
-            >
-              EDUCATION
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <EduItem
-                degree="MSc Advanced Computer Science"
-                school="University of Birmingham, UK"
-                year="2025 – 2026"
-                grade="Merit"
-                active
-              />
-              <EduItem
-                degree="B.Tech (Hons) in Computer Science with IoT&IS"
-                school="Manipal University Jaipur"
-                year="2021 – 2025"
-                grade="8.19/10"
-              />
+          <div className="about__text">
+            <FadeUp as="p" className="about__lead">
+              I like seeing a system work end to end, <em>from the data model and the API</em> through to the
+              interface someone actually uses.
+            </FadeUp>
+
+            <FadeUp className="about__paras" delay={0.1}>
+              {about.paragraphs.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </FadeUp>
+
+            <FadeUp as="dl" className="about__facts" delay={0.15}>
+              {about.facts.map(({ label, value }) => (
+                <div key={label}>
+                  <dt className="label">{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </FadeUp>
+
+            <div className="interests">
+              <h3 className="label" style={{ margin: 0 }}>
+                What I'm interested in
+              </h3>
+              <ul className="interests__list">
+                {about.interests.map((interest, i) => (
+                  <FadeUp as="li" className="interests__item" key={interest} delay={i * 0.05} y={16}>
+                    {interest}
+                  </FadeUp>
+                ))}
+              </ul>
             </div>
           </div>
-        </motion.div>
-
-        {/* Skills */}
-        <motion.div variants={item}>
-          <p
-            style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 11,
-              color: "var(--accent)",
-              letterSpacing: "0.12em",
-              marginBottom: 20,
-            }}
-          >
-            SKILLS
-          </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 16,
-            }}
-          >
-            {skills.map(({ category, items }) => (
-              <div
-                key={category}
-                className="card"
-                style={{ borderRadius: 16, padding: 20 }}
-              >
-                <p
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 13,
-                    color: "var(--text)",
-                    margin: "0 0 12px",
-                  }}
-                >
-                  {category}
-                </p>
-                <div
-                  style={{ display: "flex", flexDirection: "column", gap: 6 }}
-                >
-                  {items.map((s) => (
-                    <span
-                      key={s}
-                      style={{ fontSize: 13, color: "var(--text-muted)" }}
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </motion.div>
-
-      <style>{`.about-grid { @media (max-width: 700px) { grid-template-columns: 1fr !important; } }`}</style>
-    </section>
-  );
-}
-
-function EduItem({ degree, school, year, grade, active }) {
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          marginBottom: 4,
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontWeight: 700,
-            fontSize: 14,
-            color: "var(--text)",
-          }}
-        >
-          {degree}
-        </span>
-        {active && (
-          <span
-            style={{
-              fontSize: 10,
-              padding: "2px 8px",
-              borderRadius: 9999,
-              background: "rgba(30,138,255,0.15)",
-              color: "var(--accent)",
-              border: "1px solid var(--border)",
-              fontFamily: "'Space Mono', monospace",
-            }}
-          >
-            Current
-          </span>
-        )}
+        </div>
       </div>
-      <p
-        style={{ fontSize: 13, color: "var(--text-muted)", margin: "0 0 2px" }}
-      >
-        {school}
-      </p>
-      <p
-        style={{
-          fontFamily: "'Space Mono', monospace",
-          fontSize: 11,
-          color: "var(--text-dim)",
-          margin: 0,
-        }}
-      >
-        {year}
-        {grade ? ` · ${grade}` : ""}
-      </p>
-    </div>
+    </section>
   );
 }
