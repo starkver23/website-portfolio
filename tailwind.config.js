@@ -1,38 +1,21 @@
+// Styling lives in src/index.css as design tokens and component classes.
+// Tailwind is kept for its base reset and mirrors the same tokens here.
 export default {
-  content: ["./index.html","./src/**/*.{js,jsx}"],
-  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       fontFamily: {
-        display: ["'Syne'", "sans-serif"],
-        body: ["'DM Sans'", "sans-serif"],
-        mono: ["'Space Mono'", "monospace"],
+        display: ["Syne", "Space Grotesk", "sans-serif"],
+        head: ["Space Grotesk", "sans-serif"],
+        body: ["Plus Jakarta Sans", "sans-serif"],
       },
       colors: {
-        steel: {
-          50: "#e8f4ff",
-          100: "#c8e4ff",
-          200: "#8cc6ff",
-          300: "#50a8ff",
-          400: "#1e8aff",
-          500: "#006cd4",
-          600: "#0055a8",
-          700: "#003d7a",
-          800: "#002752",
-          900: "#001229",
-        }
+        paper: "#f3eee4",
+        ink: "#15130f",
+        cobalt: "#1f3fd1",
+        vermilion: "#e2421f",
       },
-      animation: {
-        "pulse-glow": "pulseGlow 3s ease-in-out infinite",
-        "spin-slow": "spin 8s linear infinite",
-      },
-      keyframes: {
-        pulseGlow: {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(30,138,255,0.3), 0 0 60px rgba(30,138,255,0.1)" },
-          "50%": { boxShadow: "0 0 40px rgba(30,138,255,0.6), 0 0 100px rgba(30,138,255,0.2)" },
-        }
-      }
-    }
+    },
   },
-  plugins: []
-}
+  plugins: [],
+};
